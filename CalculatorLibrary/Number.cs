@@ -11,6 +11,11 @@ namespace CalculatorLibrary
             Value = value;
         }
 
+        public Number(string value, int numberBase)
+        {
+            Value = Convert.ToInt32(value, numberBase);
+        }
+
         public string AsBase(int numberBase)
         {
             return Convert.ToString(Value, numberBase);
@@ -24,6 +29,16 @@ namespace CalculatorLibrary
         public static Number operator -(Number a, Number b)
         {
             return new Number(a.Value - b.Value);
+        }
+
+        public static bool operator ==(Number a, Number b)
+        {
+            return a.Value == b.Value;
+        }
+
+        public static bool operator !=(Number a, Number b)
+        {
+            return a.Value != b.Value;
         }
 
         public override string ToString()

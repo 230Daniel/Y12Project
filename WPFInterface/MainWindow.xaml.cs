@@ -23,13 +23,6 @@ namespace WPFInterface
     {
         public MainWindow()
         {
-            Number num = new Number(10);
-            Number num2 = new Number(15);
-
-            Console.WriteLine((num + num2).AsBase(16));
-
-            //Console.WriteLine(num.AsBase(2));
-
             InitializeComponent();
         }
 
