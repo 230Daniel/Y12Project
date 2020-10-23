@@ -4,6 +4,11 @@ namespace CalculatorLibrary
 {
     public class Number
     {
+        protected bool Equals(Number other)
+        {
+            return Value == other.Value;
+        }
+
         public int Value { get; set; }
 
         public Number(int value)

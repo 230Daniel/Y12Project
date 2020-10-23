@@ -9,10 +9,60 @@
     <Window.Background>
         <SolidColorBrush Opacity="0.6" Color="#35363a"/>
     </Window.Background>
+    <Window.Resources>
+        <SolidColorBrush x:Key="UnselectedBrush" Color="#202124"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="White"/>
+        <SolidColorBrush x:Key="SelectedBrush" Opacity="0" />
+
+        <Style TargetType="{x:Type TabItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid>
+                            <Border 
+                                Name="Border"
+                                Margin="0,0,0,0" 
+                                Background="{StaticResource UnselectedBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="0, 0, 0, 0" 
+                                CornerRadius="0,0,0,0" >
+                                <ContentPresenter x:Name="ContentSite"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    ContentSource="Header"
+                                    Margin="12,2,12,2"
+                                    RecognizesAccessKey="True"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Panel.ZIndex" Value="100" />
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource SelectedBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="0,1,0,0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>        
+    </Window.Resources>
     <Grid Background="Transparent">
         <Rectangle Name="TitleBar" Height="32" VerticalAlignment="Top" Fill="#202124" MouseDown="TitleBar_MouseDown"/>
         <Label Name="WindowTitle" Height="32" Width="200" HorizontalAlignment="Left" Margin="10, 0, 0, 0" VerticalAlignment="Top" Foreground="White" IsHitTestVisible="False" FontSize="14" VerticalContentAlignment="Center" Padding="0" Content="Binary Calculator"/>
         <Label Name="CloseButton" Width="45" Height="34" Margin="0,-2,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Content="✕" Foreground="White" Padding="3" FontSize="20" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Center" MouseEnter="TitleBarButton_MouseEnter" MouseLeave="TitleBarButton_MouseLeave" MouseDown="TitleBarButton_MouseDown"/>
         <Label Name="MinimiseButton" Width="45" Height="37" Margin="0,-5,45,0" HorizontalAlignment="Right" VerticalAlignment="Top" Content="―" Foreground="White" Padding="0" FontSize="20" FontWeight="DemiBold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" MouseEnter="TitleBarButton_MouseEnter" MouseLeave="TitleBarButton_MouseLeave" MouseDown="TitleBarButton_MouseDown"/>
+        <TabControl Name="Tabs" Margin="0,32,0,0" Background="Transparent" BorderThickness="0">
+            <TabItem Header="Convert" Foreground="White">
+                <Grid>
+                    <Label Content="Converter" Foreground="White"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Maths" Foreground="White">
+                <Grid>
+                    <Label Content="Maths" Foreground="White"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

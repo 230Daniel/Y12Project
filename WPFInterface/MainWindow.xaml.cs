@@ -29,13 +29,27 @@ namespace WPFInterface
         private void TitleBarButton_MouseEnter(object sender, MouseEventArgs e)
         {
             Label button = sender as Label;
-            button.Background = new SolidColorBrush(new Color()
+            if (button.Name == "CloseButton")
             {
-                R = 63,
-                G = 63,
-                B = 65,
-                A = 100
-            });
+                button.Background = new SolidColorBrush(new Color()
+                {
+                    R = 232,
+                    G = 17,
+                    B = 35,
+                    A = 100
+                });
+            }
+            else
+            {
+                button.Background = new SolidColorBrush(new Color()
+                {
+                    R = 63,
+                    G = 63,
+                    B = 65,
+                    A = 100
+                });
+            }
+            
         }
 
         private void TitleBarButton_MouseLeave(object sender, MouseEventArgs e)
