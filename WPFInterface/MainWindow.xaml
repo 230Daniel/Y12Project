@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFInterface"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="550" MinWidth="300" MinHeight="200" WindowStyle="None"  ResizeMode="CanResizeWithGrip" AllowsTransparency="True">
+        Title="MainWindow" Height="450" Width="550" MinWidth="300" MinHeight="260" WindowStyle="None"  ResizeMode="CanResizeWithGrip" AllowsTransparency="True">
     <Window.Background>
         <SolidColorBrush Opacity="0.6" Color="#35363a"/>
     </Window.Background>
@@ -44,7 +44,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>        
+        </Style>
     </Window.Resources>
     <Grid Background="Transparent">
         <Rectangle Name="TitleBar" Height="32" VerticalAlignment="Top" Fill="#202124" MouseDown="TitleBar_MouseDown"/>
@@ -54,13 +54,25 @@
         <TabControl Name="Tabs" Margin="0,32,0,0" Background="Transparent" BorderThickness="0">
             <TabItem Header="Convert" Foreground="White">
                 <Grid>
-                    <Label Content="Converter" Foreground="White"/>
+                    <Label Content="Decimal" Foreground="White" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
+                    <TextBox Name="Decimal" Height="40" Margin="20,20,20,0" VerticalAlignment="Top" FontSize="30" Foreground="White" Background="Black" BorderThickness="0" TextChanged="Convert_TextChanged"/>
+                    <Label Content="Binary" Foreground="White" Margin="0, 60, 0, 0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
+                    <TextBox Name="Binary" Height="40" Margin="20,80,20,0" VerticalAlignment="Top" FontSize="30" Foreground="White" Background="Black" BorderThickness="0" TextChanged="Convert_TextChanged"/>
+                    <Label Content="Hexadecimal" Foreground="White" Margin="0, 120, 0, 0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
+                    <TextBox Name="Hex" Height="40" Margin="20,140,20,0" VerticalAlignment="Top" FontSize="30" Foreground="White" Background="Black" BorderThickness="0" TextChanged="Convert_TextChanged"/>
+                    
                 </Grid>
             </TabItem>
 
             <TabItem Header="Maths" Foreground="White">
                 <Grid>
                     <Label Content="Maths" Foreground="White"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Game" Foreground="White">
+                <Grid>
+                    <Label Content="Game" Foreground="White"/>
                 </Grid>
             </TabItem>
         </TabControl>

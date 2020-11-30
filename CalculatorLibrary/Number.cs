@@ -1,29 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CalculatorLibrary
 {
     public class Number
     {
-        protected bool Equals(Number other)
-        {
-            return Value == other.Value;
-        }
+        public long Value { get; set; }
+        public bool Invalid { get; protected set; }
 
-        public int Value { get; set; }
-
-        public Number(int value)
+        public Number(long value)
         {
             Value = value;
         }
 
         public Number(string value, int numberBase)
         {
-            Value = Convert.ToInt32(value, numberBase);
+            try
+            {
+                Value = Convert.ToInt64(value, numberBase);
+            }
+            catch (OverflowException e)
+            {
+                Value = long.MaxValue;
+            }
+            catch
+            {
+                Value = 0;
+            }
         }
 
         public string AsBase(int numberBase)
         {
-            return Convert.ToString(Value, numberBase);
+            string value = Convert.ToString(Value, numberBase);
+            return value == "0" ? "" : value;
         }
 
         public static Number operator +(Number a, Number b)
@@ -49,6 +59,24 @@ namespace CalculatorLibrary
         public override string ToString()
         {
             return Value.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Number) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
+        protected bool Equals(Number other)
+        {
+            return Value == other.Value;
         }
     }
 }
