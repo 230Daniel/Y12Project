@@ -5,7 +5,6 @@ namespace CalculatorLibrary
     public class Number
     {
         public long Value { get; }
-        public bool Invalid { get; protected set; }
 
         public Number(long value)
         {

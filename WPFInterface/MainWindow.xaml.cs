@@ -51,14 +51,11 @@ namespace WPFInterface
             // when the program is updating the text, we don't go into a loop.
             // The _avoidRecursion variable prevents this.
 
-            if (!number.Invalid)
-            {
-                _avoidRecursion = true;
-                Binary.Text = number.AsBase(2);
-                Decimal.Text = number.AsBase(10);
-                Hex.Text = number.AsBase(16);
-                _avoidRecursion = false;
-            }
+            _avoidRecursion = true;
+            Binary.Text = number.AsBase(2);
+            Decimal.Text = number.AsBase(10);
+            Hex.Text = number.AsBase(16);
+            _avoidRecursion = false;
         }
 
         private void ValidateTextFields()
