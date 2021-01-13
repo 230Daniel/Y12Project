@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CalculatorLibrary
 {
     public class Number
     {
-        public long Value { get; set; }
+        public long Value { get; }
         public bool Invalid { get; protected set; }
 
         public Number(long value)
@@ -20,7 +18,7 @@ namespace CalculatorLibrary
             {
                 Value = Convert.ToInt64(value, numberBase);
             }
-            catch (OverflowException e)
+            catch (OverflowException)
             {
                 Value = long.MaxValue;
             }
@@ -74,7 +72,7 @@ namespace CalculatorLibrary
             return Value.GetHashCode();
         }
 
-        protected bool Equals(Number other)
+        private bool Equals(Number other)
         {
             return Value == other.Value;
         }
