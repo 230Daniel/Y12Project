@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,6 +22,7 @@ namespace WPFInterface
         private void Convert_TextChanged(object sender, TextChangedEventArgs e)
         {
             if(_avoidRecursion) return;
+            _avoidRecursion = true;
 
             // Delete invalid characters from the text fields
 
@@ -51,18 +53,38 @@ namespace WPFInterface
             // when the program is updating the text, we don't go into a loop.
             // The _avoidRecursion variable prevents this.
 
-            _avoidRecursion = true;
             Binary.Text = number.AsBase(2);
             Decimal.Text = number.AsBase(10);
             Hex.Text = number.AsBase(16);
+
             _avoidRecursion = false;
         }
 
         private void ValidateTextFields()
         {
+            // Store the current position of the caret
+
+            int decimalCaret = Decimal.CaretIndex;
+            int binaryCaret = Binary.CaretIndex;
+            int hexCaret = Hex.CaretIndex;
+
+            // If they entered invalid text, take one away from the caret so it will end up in the same place
+
+            if (new Regex("[^0-9]").IsMatch(Decimal.Text)) decimalCaret--;
+            if (new Regex("[^0-1]").IsMatch(Binary.Text)) binaryCaret--;
+            if (new Regex("[^0-9a-fA-F]").IsMatch(Hex.Text)) hexCaret--;
+
+            // Replace the invalid text with an empty string
+
             Decimal.Text = new Regex("[^0-9]").Replace(Decimal.Text, "");
             Binary.Text = new Regex("[^0-1]").Replace(Binary.Text, "");
             Hex.Text = new Regex("[^0-9a-fA-F]").Replace(Hex.Text, "").ToLower();
+
+            // Set the position of the caret back to what it was before
+
+            Decimal.CaretIndex = decimalCaret;
+            Binary.CaretIndex = binaryCaret;
+            Hex.CaretIndex = hexCaret;
         }
 
         private void TitleBarButton_MouseEnter(object sender, MouseEventArgs e)
