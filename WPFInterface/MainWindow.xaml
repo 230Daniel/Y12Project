@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="550" MinWidth="300" MinHeight="260" WindowStyle="None"  ResizeMode="CanResizeWithGrip" AllowsTransparency="True">
+        Title="MainWindow" Height="450" Width="550" MinWidth="300" MinHeight="270" WindowStyle="None"  ResizeMode="CanResizeWithGrip" AllowsTransparency="True">
     <Window.Background>
         <SolidColorBrush Opacity="0.6" Color="#35363a"/>
     </Window.Background>
@@ -52,7 +52,7 @@
         <Label Name="MinimiseButton" Width="45" Height="37" Margin="0,-5,45,0" HorizontalAlignment="Right" VerticalAlignment="Top" Content="―" Foreground="White" Padding="0" FontSize="20" FontWeight="DemiBold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" MouseEnter="TitleBarButton_MouseEnter" MouseLeave="TitleBarButton_MouseLeave" MouseDown="TitleBarButton_MouseDown"/>
         <TabControl Name="Tabs" Margin="0,32,0,0" Background="Transparent" BorderThickness="0">
             <TabItem Header="Simple" Foreground="White">
-                <Grid>
+                <Grid Margin="0, 10, 0, 0">
                     <Label Content="Decimal" Foreground="White" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
                     <TextBox Name="Decimal" Height="40" Margin="20,20,20,0" VerticalAlignment="Top" FontSize="30" Foreground="White" Background="Black" BorderThickness="0" TextChanged="Simple_TextChanged"/>
                     <Label Content="Binary" Foreground="White" Margin="0, 60, 0, 0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
@@ -63,19 +63,25 @@
             </TabItem>
 
             <TabItem Header="Custom" Foreground="White">
-                <Grid>
-                    <Label Content="Base n" Foreground="White" Margin="0,0,80,0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
+                <Grid Margin="0, 10, 0, 0">
+                    <Label Name="Custom1Label" Content="Base 10" Foreground="White" Margin="0,0,80,0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
                     <TextBox Name="Custom1" Height="40" Margin="20,20,100,0" VerticalAlignment="Top" FontSize="30" Foreground="White" Background="Black" BorderThickness="0" TextChanged="Custom_TextChanged"/>
                     <TextBox Name="Base1" TextAlignment="Center" Text="10" Height="40" HorizontalAlignment="Right" Margin="0,20,20,0" VerticalAlignment="Top" Width="60" FontSize="30" Foreground="White" Background="Black" BorderThickness="0"/>
 
-                    <Label Content="Base n" Foreground="White" Margin="0,60,80,0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
+                    <Label Name="Custom2Label" Content="Base 36" Foreground="White" Margin="0,60,80,0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
                     <TextBox Name="Custom2" Height="40" Margin="20,80,100,0" VerticalAlignment="Top" FontSize="30" Foreground="White" Background="Black" BorderThickness="0" TextChanged="Custom_TextChanged"/>
-                    <TextBox Name="Base2" TextAlignment="Center" Text="2" Height="40" HorizontalAlignment="Right" Margin="0,80,20,0" VerticalAlignment="Top" Width="60" FontSize="30" Foreground="White" Background="Black" BorderThickness="0"/>
+                    <TextBox Name="Base2" TextAlignment="Center" Text="36" Height="40" HorizontalAlignment="Right" Margin="0,80,20,0" VerticalAlignment="Top" Width="60" FontSize="30" Foreground="White" Background="Black" BorderThickness="0"/>
 
-                    <Label Content="Base n" Foreground="White" Margin="0,120,80,0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
+                    <Label Name="Custom3Label" Content="Base 62" Foreground="White" Margin="0,120,80,0" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
                     <TextBox Name="Custom3" Height="40" Margin="20,140,100,0" VerticalAlignment="Top" FontSize="30" Foreground="White" Background="Black" BorderThickness="0" TextChanged="Custom_TextChanged"/>
-                    <TextBox Name="Base3" TextAlignment="Center" Text="16" Height="40" HorizontalAlignment="Right" Margin="0,140,20,0" VerticalAlignment="Top" Width="60" FontSize="30" Foreground="White" Background="Black" BorderThickness="0"/>
-                    
+                    <TextBox Name="Base3" TextAlignment="Center" Text="62" Height="40" HorizontalAlignment="Right" Margin="0,140,20,0" VerticalAlignment="Top" Width="60" FontSize="30" Foreground="White" Background="Black" BorderThickness="0"/>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Settings" Foreground="White">
+                <Grid Margin="0, 10, 0, 0">
+                    <Label Name="CharactersLabel" Content="Character List: Base n" Foreground="White" VerticalAlignment="Top" Padding="0" FontSize="15" HorizontalAlignment="Center" Height="20"/>
+                    <TextBox Name="Characters" Margin="20,20,20,0" VerticalAlignment="Top" FontSize="20" Foreground="White" Background="Black" BorderThickness="0" TextWrapping="Wrap" TextChanged="Settings_TextChanged" Height="160"/>
                 </Grid>
             </TabItem>
         </TabControl>

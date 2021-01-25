@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,6 +19,11 @@ namespace WPFInterface
         public MainWindow()
         {
             InitializeComponent();
+
+            const string defaultCharacters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            Characters.Text = defaultCharacters;
+            BaseConverter.Characters = defaultCharacters.ToCharArray();
+            CharactersLabel.Content = $"Characters: Base {BaseConverter.Characters.Length}";
         }
 
         private bool _avoidRecursion;
@@ -70,23 +77,36 @@ namespace WPFInterface
 
             // If they entered invalid text, take one away from the caret so it will end up in the same place
 
-            if (new Regex("[^0-9]").IsMatch(Decimal.Text)) decimalCaret--;
-            if (new Regex("[^0-1]").IsMatch(Binary.Text)) binaryCaret--;
-            if (new Regex("[^0-9a-fA-F]").IsMatch(Hex.Text)) hexCaret--;
+            char[] validCharacters = BaseConverter.GetValidCharactersForBase(10);
+            if (!string.IsNullOrEmpty(Base1.Text) && Decimal.Text.ToCharArray().Any(x => !validCharacters.Contains(x))) decimalCaret--;
 
-            // Replace the invalid text with an empty string
+            validCharacters = BaseConverter.GetValidCharactersForBase(2);
+            if(!string.IsNullOrEmpty(Binary.Text) && Binary.Text.ToCharArray().Any(x => !validCharacters.Contains(x))) binaryCaret--;
 
-            Decimal.Text = new Regex("[^0-9]").Replace(Decimal.Text, "");
-            Binary.Text = new Regex("[^0-1]").Replace(Binary.Text, "");
-            Hex.Text = new Regex("[^0-9a-fA-F]").Replace(Hex.Text, "").ToLower();
+            validCharacters = BaseConverter.GetValidCharactersForBase(16);
+            if(!string.IsNullOrEmpty(Hex.Text) && Hex.Text.ToCharArray().Any(x => !validCharacters.Contains(x))) hexCaret--;
+
+            // Remove the invalid text
+
+            validCharacters = BaseConverter.GetValidCharactersForBase(10);
+            Decimal.Text = string.Concat(Decimal.Text.ToCharArray().Where(x => validCharacters.Contains(x)));
+
+            validCharacters = BaseConverter.GetValidCharactersForBase(2);
+            Binary.Text = string.Concat(Binary.Text.ToCharArray().Where(x => validCharacters.Contains(x)));
+
+            validCharacters = BaseConverter.GetValidCharactersForBase(16);
+            Hex.Text = string.Concat(Hex.Text.ToCharArray().Where(x => validCharacters.Contains(x)));
 
             // Set the position of the caret back to what it was before
+
+            if (decimalCaret < 1) decimalCaret = 0;
+            if (binaryCaret < 1) binaryCaret = 0;
+            if (hexCaret < 1) hexCaret = 0;
 
             Decimal.CaretIndex = decimalCaret;
             Binary.CaretIndex = binaryCaret;
             Hex.CaretIndex = hexCaret;
         }
-
 
 
         private void Custom_TextChanged(object sender, TextChangedEventArgs e)
@@ -96,9 +116,17 @@ namespace WPFInterface
             if(_avoidRecursion) return;
             _avoidRecursion = true;
 
+            if (Custom1.Text == "x" && Base1.Text == "10" && Base3.Text == "62")
+            {
+                ValidateCustomTextFields();
+                _ = HelloWorld();
+                _avoidRecursion = false;
+                return;
+            }
+
             // Delete invalid characters from the text fields
 
-            ValidateComplexTextFields();
+            ValidateCustomTextFields();
 
             TextBox textBox = sender as TextBox;
             Number number = new Number(0);
@@ -117,6 +145,10 @@ namespace WPFInterface
                     number = new Number(textBox.Text, int.Parse(Base3.Text));
                     break;
             }
+
+            Custom1Label.Content = $"Base {Base1.Text}";
+            Custom2Label.Content = $"Base {Base2.Text}";
+            Custom3Label.Content = $"Base {Base3.Text}";
             
             // Because this method is called whenever the text is updated, we need to ensure that
             // when the program is updating the text, we don't go into a loop.
@@ -135,7 +167,7 @@ namespace WPFInterface
             _avoidRecursion = false;
         }
 
-        private void ValidateComplexTextFields()
+        private void ValidateCustomTextFields()
         {
             // Make sure that the base fields are only numbers
 
@@ -146,14 +178,14 @@ namespace WPFInterface
             // Get the bases of each field so we can validate them
 
             if (!int.TryParse(Base1.Text, out int base1)) base1 = 10;
-            if (!int.TryParse(Base2.Text, out int base2)) base2 = 2;
-            if (!int.TryParse(Base3.Text, out int base3)) base3 = 16;
+            if (!int.TryParse(Base2.Text, out int base2)) base2 = 36;
+            if (!int.TryParse(Base3.Text, out int base3)) base3 = 62;
 
             // If the bases are invalid set them to their default values
 
-            if (base1 <= 1 || base1 > 36) base1 = 10;
-            if (base2 <= 1 || base2 > 36) base2 = 2;
-            if (base3 <= 1 || base3 > 36) base3 = 16;
+            if (base1 <= 1) base1 = 10;
+            if (base2 <= 1) base2 = 36;
+            if (base3 <= 1) base3 = 62;
 
             // Set the values of the base fields in case they were invalid
 
@@ -191,10 +223,55 @@ namespace WPFInterface
 
             // Set the position of the caret back to what it was before
 
+            if (caret1 < 1) caret1 = 0;
+            if (caret2 < 1) caret2 = 0;
+            if (caret3 < 1) caret3 = 0;
+
             Custom1.CaretIndex = caret1;
             Custom2.CaretIndex = caret2;
             Custom3.CaretIndex = caret3;
         }
+
+        private async Task HelloWorld()
+        {
+            Random random = new Random();
+            foreach (char character in "585226652529239343")
+            {
+                Custom1.Text += character.ToString();
+                Custom1.CaretIndex = Custom1.Text.Length;
+                await Task.Delay(random.Next(250, 500));
+            }
+        }
+
+        private void Settings_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+
+            ValidateSettingsTextFields();
+            TextBox textBox = sender as TextBox;
+
+            switch (textBox.Name)
+            {
+                case "Characters":
+                    BaseConverter.Characters = textBox.Text.ToCharArray();
+                    CharactersLabel.Content = $"Characters: Base {BaseConverter.Characters.Length}";
+                    break;
+            }
+        }
+
+        private void ValidateSettingsTextFields()
+        {
+            int charactersCaret = Characters.CaretIndex;
+
+            string oldCharacters = Characters.Text;
+            Characters.Text = string.Concat(Characters.Text.ToCharArray().Distinct());
+
+            if (oldCharacters.Length > Characters.Text.Length) charactersCaret--;
+
+            if (charactersCaret < 1) charactersCaret = 0;
+            Characters.CaretIndex = charactersCaret;
+        }
+
 
         private void TitleBarButton_MouseEnter(object sender, MouseEventArgs e)
         {

@@ -27,17 +27,5 @@ namespace UnitTests
 
             Assert.AreEqual(50, number.Value);
         }
-
-        [TestMethod]
-        public void AddNumbers()
-        {
-            Number number1 = new Number(10);
-            Number number2 = new Number(5);
-
-            Number expectedNumber = new Number(15);
-            Number actualNumber = number1 + number2;
-
-            Assert.AreEqual(expectedNumber.Value, actualNumber.Value);
-        }
     }
 }

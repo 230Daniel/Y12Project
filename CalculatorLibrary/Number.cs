@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 
 namespace CalculatorLibrary
@@ -19,8 +20,7 @@ namespace CalculatorLibrary
 
         public string AsBase(int numberBase)
         {
-            string value = BaseConverter.IntegerToBase(Value, numberBase);
-            return value == "0" ? "" : value;
+            return BaseConverter.IntegerToBase(Value, numberBase);
         }
     }
 }
