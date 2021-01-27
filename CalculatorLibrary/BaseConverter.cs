@@ -11,7 +11,7 @@ namespace CalculatorLibrary
 
         public static string IntegerToBase(BigInteger inputNumber, int numberBase)
         {
-            if (numberBase > Characters.Length) return "";
+            if (numberBase > Characters.Length || numberBase < 2) return "";
 
             List<BigInteger> outputCharIndexes = new List<BigInteger>();
 
@@ -28,7 +28,7 @@ namespace CalculatorLibrary
 
         public static BigInteger BaseToInteger(string inputNumber, int numberBase)
         {
-            if (numberBase > Characters.Length) return 0;
+            if (numberBase > Characters.Length || numberBase < 2) return 0;
 
             List<char> inputCharacters = inputNumber.ToList();
             inputCharacters.Reverse();

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,7 +15,11 @@ namespace WPFInterface
     {
         public MainWindow()
         {
+            // Load the user interface
             InitializeComponent();
+
+            // Set the default character set in all required places
+            // This could be loaded from a file but I thought it'd be better to have default settings each time it starts.
 
             const string defaultCharacters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             Characters.Text = defaultCharacters;
@@ -27,6 +28,9 @@ namespace WPFInterface
         }
 
         private bool _avoidRecursion;
+
+        // Simple tab
+
         private void Simple_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!IsLoaded) return;
@@ -35,7 +39,6 @@ namespace WPFInterface
             _avoidRecursion = true;
 
             // Delete invalid characters from the text fields
-
             ValidateSimpleTextFields();
 
             TextBox textBox = sender as TextBox;
@@ -60,35 +63,35 @@ namespace WPFInterface
             // when the program is updating the text, we don't go into a loop.
             // The _avoidRecursion variable prevents this.
 
+            // Set the value of each box to the value converted to the box's base
+
             Binary.Text = number.AsBase(2);
             Decimal.Text = number.AsBase(10);
             Hex.Text = number.AsBase(16);
+
+            // Because we're not changing the values programatically,
+            // we no longer need to worry about recursion
 
             _avoidRecursion = false;
         }
 
         private void ValidateSimpleTextFields()
         {
-            // Store the current position of the caret
-
+            // Store the current position of the caret so that we can restore it later
+            
             int decimalCaret = Decimal.CaretIndex;
             int binaryCaret = Binary.CaretIndex;
             int hexCaret = Hex.CaretIndex;
 
-            // If they entered invalid text, take one away from the caret so it will end up in the same place
+            // Also store the current length of the text so if we remove text we know how much has been removed
 
-            char[] validCharacters = BaseConverter.GetValidCharactersForBase(10);
-            if (!string.IsNullOrEmpty(Base1.Text) && Decimal.Text.ToCharArray().Any(x => !validCharacters.Contains(x))) decimalCaret--;
-
-            validCharacters = BaseConverter.GetValidCharactersForBase(2);
-            if(!string.IsNullOrEmpty(Binary.Text) && Binary.Text.ToCharArray().Any(x => !validCharacters.Contains(x))) binaryCaret--;
-
-            validCharacters = BaseConverter.GetValidCharactersForBase(16);
-            if(!string.IsNullOrEmpty(Hex.Text) && Hex.Text.ToCharArray().Any(x => !validCharacters.Contains(x))) hexCaret--;
+            int decimalOriginalLength = Decimal.Text.Length;
+            int binaryOriginalLength = Binary.Text.Length;
+            int hexOriginalLength = Hex.Text.Length;
 
             // Remove the invalid text
 
-            validCharacters = BaseConverter.GetValidCharactersForBase(10);
+            char[] validCharacters = BaseConverter.GetValidCharactersForBase(10);
             Decimal.Text = string.Concat(Decimal.Text.ToCharArray().Where(x => validCharacters.Contains(x)));
 
             validCharacters = BaseConverter.GetValidCharactersForBase(2);
@@ -97,17 +100,26 @@ namespace WPFInterface
             validCharacters = BaseConverter.GetValidCharactersForBase(16);
             Hex.Text = string.Concat(Hex.Text.ToCharArray().Where(x => validCharacters.Contains(x)));
 
-            // Set the position of the caret back to what it was before
+            // If we've removed text we need to alter the caret position so it doesn't move on the screen
+
+            decimalCaret -= decimalOriginalLength - Decimal.Text.Length;
+            binaryCaret -= binaryOriginalLength - Binary.Text.Length;
+            hexCaret -= hexOriginalLength - Hex.Text.Length;
+
+            // It's possible that our caret has been moved below 0. To avoid an error, make sure this can't happen
 
             if (decimalCaret < 1) decimalCaret = 0;
             if (binaryCaret < 1) binaryCaret = 0;
             if (hexCaret < 1) hexCaret = 0;
+
+            // Restore the position of the caret
 
             Decimal.CaretIndex = decimalCaret;
             Binary.CaretIndex = binaryCaret;
             Hex.CaretIndex = hexCaret;
         }
 
+        // Custom tab
 
         private void Custom_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -116,16 +128,8 @@ namespace WPFInterface
             if(_avoidRecursion) return;
             _avoidRecursion = true;
 
-            if (Custom1.Text == "x" && Base1.Text == "10" && Base3.Text == "62")
-            {
-                ValidateCustomTextFields();
-                _ = HelloWorld();
-                _avoidRecursion = false;
-                return;
-            }
-
             // Delete invalid characters from the text fields
-
+            ValidateCustomBaseTextFields();
             ValidateCustomTextFields();
 
             TextBox textBox = sender as TextBox;
@@ -146,10 +150,6 @@ namespace WPFInterface
                     break;
             }
 
-            Custom1Label.Content = $"Base {Base1.Text}";
-            Custom2Label.Content = $"Base {Base2.Text}";
-            Custom3Label.Content = $"Base {Base3.Text}";
-            
             // Because this method is called whenever the text is updated, we need to ensure that
             // when the program is updating the text, we don't go into a loop.
             // The _avoidRecursion variable prevents this.
@@ -160,38 +160,25 @@ namespace WPFInterface
             int base2 = int.Parse(Base2.Text);
             int base3 = int.Parse(Base3.Text);
 
+            // Set the value of each box to the value converted to the box's base
+
             Custom1.Text = number.AsBase(base1);
             Custom2.Text = number.AsBase(base2);
             Custom3.Text = number.AsBase(base3);
+
+            // Because we're not changing the values programatically,
+            // we no longer need to worry about recursion
 
             _avoidRecursion = false;
         }
 
         private void ValidateCustomTextFields()
         {
-            // Make sure that the base fields are only numbers
-
-            Base1.Text = new Regex("[^0-9]").Replace(Base1.Text, "");
-            Base2.Text = new Regex("[^0-9]").Replace(Base2.Text, "");
-            Base3.Text = new Regex("[^0-9]").Replace(Base3.Text, "");
-
             // Get the bases of each field so we can validate them
 
-            if (!int.TryParse(Base1.Text, out int base1)) base1 = 10;
-            if (!int.TryParse(Base2.Text, out int base2)) base2 = 36;
-            if (!int.TryParse(Base3.Text, out int base3)) base3 = 62;
-
-            // If the bases are invalid set them to their default values
-
-            if (base1 <= 1) base1 = 10;
-            if (base2 <= 1) base2 = 36;
-            if (base3 <= 1) base3 = 62;
-
-            // Set the values of the base fields in case they were invalid
-
-            Base1.Text = base1.ToString();
-            Base2.Text = base2.ToString();
-            Base3.Text = base3.ToString();
+            if (!int.TryParse(Base1.Text, out int base1)) base1 = -1;
+            if (!int.TryParse(Base2.Text, out int base2)) base2 = -1;
+            if (!int.TryParse(Base3.Text, out int base3)) base3 = -1;
 
             // Store the current position of the caret
 
@@ -232,16 +219,62 @@ namespace WPFInterface
             Custom3.CaretIndex = caret3;
         }
 
-        private async Task HelloWorld()
+        private void Custom_BaseTextChanged(object sender, TextChangedEventArgs e)
         {
-            Random random = new Random();
-            foreach (char character in "585226652529239343")
-            {
-                Custom1.Text += character.ToString();
-                Custom1.CaretIndex = Custom1.Text.Length;
-                await Task.Delay(random.Next(250, 500));
-            }
+            if (!IsLoaded) return;
+
+            ValidateCustomBaseTextFields();
         }
+
+        private void ValidateCustomBaseTextFields()
+        {
+            // Make sure that the base fields are only numbers
+
+            Base1.Text = new Regex("[^0-9]").Replace(Base1.Text, "");
+            Base2.Text = new Regex("[^0-9]").Replace(Base2.Text, "");
+            Base3.Text = new Regex("[^0-9]").Replace(Base3.Text, "");
+
+            // Change appearence based on validity
+
+            if (int.TryParse(Base1.Text, out int base1) && base1 <= BaseConverter.Characters.Length && base1 > 1)
+            {
+                Custom1.IsEnabled = true;
+                Custom1Label.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            }
+            else
+            {
+                Custom1Label.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                Custom1.IsEnabled = false;
+            }
+            Custom1Label.Content = $"Base {base1}";
+
+            if (int.TryParse(Base2.Text, out int base2) && base2 <= BaseConverter.Characters.Length && base2 > 1)
+            {
+                Custom2.IsEnabled = true;
+                Custom2Label.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            }
+            else
+            {
+                Custom2Label.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                Custom2.IsEnabled = false;
+            }
+            Custom2Label.Content = $"Base {base2}";
+
+            if (int.TryParse(Base3.Text, out int base3) && base3 <= BaseConverter.Characters.Length && base3 > 1)
+            {
+                
+                Custom3.IsEnabled = true;
+                Custom3Label.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            }
+            else
+            {
+                Custom3Label.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                Custom3.IsEnabled = false;
+            }
+            Custom3Label.Content = $"Base {base3}";
+        }
+
+        // Settings tab
 
         private void Settings_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -272,6 +305,7 @@ namespace WPFInterface
             Characters.CaretIndex = charactersCaret;
         }
 
+        // Title bar controls
 
         private void TitleBarButton_MouseEnter(object sender, MouseEventArgs e)
         {
